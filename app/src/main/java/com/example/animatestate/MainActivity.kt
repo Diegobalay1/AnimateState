@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -19,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.animatestate.ui.theme.AnimateStateTheme
 
@@ -90,6 +93,61 @@ fun ColorChangePreview() {
         ColorChangeDemo()
     }
 }
+
+/**
+ * Enumeración para el movimiento
+ */
+enum class BoxPosition {
+    Start, End
+}
+
+@Composable
+fun MotionDemo() {
+    val screenWidth = (LocalConfiguration.current.screenWidthDp.dp)
+    var boxState by remember { mutableStateOf(BoxPosition.Start) }
+    val boxSideLength = 70.dp
+
+    val animatedOffset: Dp by animateDpAsState(
+        targetValue = when (boxState) {
+            BoxPosition.Start -> 0.dp
+            BoxPosition.End -> screenWidth - boxSideLength
+        },
+        animationSpec = tween(durationMillis = 500)
+    )
+    
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier
+            //.offset(x = 0.dp, y = 20.dp)
+            .offset(x = animatedOffset, y = 20.dp)
+            .size(boxSideLength)
+            .background(Color.Red)
+        )
+        
+        Spacer(modifier = Modifier.height(50.dp))
+        
+        Button(onClick = {
+            boxState = when(boxState) {
+                BoxPosition.Start -> BoxPosition.End
+                BoxPosition.End -> BoxPosition.Start
+            }
+        },
+            modifier = Modifier
+                .padding(20.dp)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            Text(text = "Move Box")
+        }
+    }
+}
+
+@Preview
+@Composable
+fun MotionDemoPreview() {
+    AnimateStateTheme {
+        MotionDemo()
+    }
+}
+
 
 /**
  * Animating rotation with animateFloatAsState
