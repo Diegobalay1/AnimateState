@@ -112,7 +112,15 @@ fun MotionDemo() {
             BoxPosition.End -> screenWidth - boxSideLength
         },
         //animationSpec = tween(durationMillis = 500)
-        animationSpec = spring(dampingRatio = DampingRatioHighBouncy, stiffness = StiffnessVeryLow)
+        /*animationSpec = spring(
+            dampingRatio = DampingRatioHighBouncy, stiffness = StiffnessVeryLow
+        ),*/
+        animationSpec = keyframes {
+            durationMillis = 1000
+            100.dp.at(10).with(LinearEasing)
+            110.dp.at(500).with(FastOutSlowInEasing)
+            200.dp.at(700).with(LinearOutSlowInEasing)
+        }
     )
     
     Column(modifier = Modifier.fillMaxWidth()) {
